@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProducts } from "./productContext";
-import "./table.css";
 import getProducts from "./@utils/getProducts";
 
 const Table = () => {
@@ -32,41 +31,75 @@ const Table = () => {
   };
 
   return (
-    <div className="table-container">
-      <button onClick={() => navigate("/myform")} className="navigate-btn">
-        Form
-      </button>
-      <h1>Product Table</h1>
+    <div className="max-w-5xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Product Table</h1>
+        <button
+          onClick={() => navigate("/myform")}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+        >
+          Form
+        </button>
+      </div>
 
       {allProducts.length === 0 ? (
-        <p>No products available.</p>
+        <p className="text-center text-gray-600">No products available.</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Product Name</th>
-              <th>Brand</th>
-              <th>Category</th>
-              <th>Description</th>
-              <th>Price</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {allProducts.map((prod, idx) => (
-              <tr key={`${prod._source}-${idx}`}>
-                <td>{prod.productName || prod.title}</td>
-                <td>{prod.brand}</td>
-                <td>{prod.category}</td>
-                <td>{prod.description}</td>
-                <td>${prod.price}</td>
-                <td>
-                  <button onClick={() => handleDelete(prod)}>Delete</button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="min-w-full table-auto border-collapse border border-gray-300 rounded-lg">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-4 py-2 border border-gray-300 text-left">
+                  Product Name
+                </th>
+                <th className="px-4 py-2 border border-gray-300 text-left">
+                  Brand
+                </th>
+                <th className="px-4 py-2 border border-gray-300 text-left">
+                  Category
+                </th>
+                <th className="px-4 py-2 border border-gray-300 text-left">
+                  Description
+                </th>
+                <th className="px-4 py-2 border border-gray-300 text-left">
+                  Price
+                </th>
+                <th className="px-4 py-2 border border-gray-300 text-left">
+                  Action
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {allProducts.map((prod, idx) => (
+                <tr key={`${prod._source}-${idx}`} className="hover:bg-gray-50">
+                  <td className="px-4 py-2 border border-gray-300">
+                    {prod.productName || prod.title}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {prod.brand}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {prod.category}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {prod.description}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    ${prod.price}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300 text-center">
+                    <button
+                      onClick={() => handleDelete(prod)}
+                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
