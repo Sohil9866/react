@@ -1,31 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProducts } from "./productContext";
+import "./table.css";
 import getProducts from "./@utils/getProducts";
 
 const Table = () => {
   const navigate = useNavigate();
   const { products: formProducts, removeProduct } = useProducts();
-
   const [apiProducts, setApiProducts] = useState([]);
-  const [loading, setLoading] = useState(true); // Start loading immediately
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    async function fetchData() {
       const data = await getProducts();
       setApiProducts(data);
-      setLoading(false);
-    };
-    fetchProducts();
+    }
+    fetchData();
   }, []);
 
-  // Merge form products + API products
+  // Build a unified list: add a `source` flag so we know how to delete
   const allProducts = [
-    ...formProducts.map((p, i) => ({
-      ...p,
-      _source: "form",
-      _formIndex: i,
-    })),
+    ...formProducts.map((p, i) => ({ ...p, _source: "form", _formIndex: i })),
     ...apiProducts.map((p, i) => ({ ...p, _source: "api", _apiIndex: i })),
   ];
 
@@ -38,59 +32,41 @@ const Table = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      {/* Navigation Button */}
-      <div className="flex gap-4 mb-4">
-        <button
-          onClick={() => navigate("/myform")}
-          className="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition"
-        >
-          Form
-        </button>
-      </div>
+    <div className="table-container">
+      <button onClick={() => navigate("/myform")} className="navigate-btn">
+        Form
+      </button>
+      <h1>Product Table</h1>
 
-      <h1 className="text-2xl font-bold mb-4">Product Table</h1>
-
-      {loading ? (
-        <p className="text-gray-600">Loading products...</p>
-      ) : allProducts.length === 0 ? (
-        <p className="text-gray-600">No products available.</p>
+      {allProducts.length === 0 ? (
+        <p>No products available.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full border border-gray-200 rounded-lg">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-4 py-2 border-b text-left">Product Name</th>
-                <th className="px-4 py-2 border-b text-left">Brand</th>
-                <th className="px-4 py-2 border-b text-left">Category</th>
-                <th className="px-4 py-2 border-b text-left">Description</th>
-                <th className="px-4 py-2 border-b text-left">Price</th>
-                <th className="px-4 py-2 border-b text-left">Action</th>
+        <table>
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Brand</th>
+              <th>Category</th>
+              <th>Description</th>
+              <th>Price</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allProducts.map((prod, idx) => (
+              <tr key={`${prod._source}-${idx}`}>
+                <td>{prod.productName || prod.title}</td>
+                <td>{prod.brand}</td>
+                <td>{prod.category}</td>
+                <td>{prod.description}</td>
+                <td>${prod.price}</td>
+                <td>
+                  <button onClick={() => handleDelete(prod)}>Delete</button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {allProducts.map((prod, idx) => (
-                <tr key={`${prod._source}-${idx}`} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 border-b">
-                    {prod.productName || prod.title}
-                  </td>
-                  <td className="px-4 py-2 border-b">{prod.brand}</td>
-                  <td className="px-4 py-2 border-b">{prod.category}</td>
-                  <td className="px-4 py-2 border-b">{prod.description}</td>
-                  <td className="px-4 py-2 border-b">${prod.price}</td>
-                  <td className="px-4 py-2 border-b">
-                    <button
-                      onClick={() => handleDelete(prod)}
-                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );

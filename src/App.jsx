@@ -8,11 +8,11 @@ function App() {
   return (
     <div>
       <ProductProvider>
-        <Routes>
-          <Route path="/" element={<Navigate to="/myform" replace />} />
-          <Route path="/myform" element={<MyForm />} />
-          <Route path="/table" element={<Table />} />
-        </Routes>
+      <Routes>
+        <Route path="/" element={<Navigate to="/myform" replace />} />
+        <Route path="/myform" element={<MyForm />} />
+        <Route path="/table" element={<Table />} />
+      </Routes>
       </ProductProvider>
     </div>
   );
